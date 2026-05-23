@@ -90,27 +90,40 @@ class SPSPrecargaApp:
         self._build_ui()
 
     def _build_ui(self):
-        # ✅ Tabs con label y content directo (Flet 0.85+)
-        self.tabs = ft.Tabs(
-            selected_index=0,
-            animation_duration=300,
-            tabs=[
-                ft.Tab(label="1. Identificación", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
-                ft.Tab(label="2. Descripción Programa", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
-                ft.Tab(label="3. Prestaciones", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
-                ft.Tab(label="4. Guardar/Exportar", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
-            ],
-            on_change=self._on_tab_change
-        )
-        
-        # ✅ Referencias a los contenidos de cada tab
-        self.tab_contents[0] = self.tabs.tabs[0].content
-        self.tab_contents[1] = self.tabs.tabs[1].content
-        self.tab_contents[2] = self.tabs.tabs[2].content
-        self.tab_contents[3] = self.tabs.tabs[3].content
+        # ✅ Flet 0.85.1: Tabs usa content + length con TabBar y TabBarView
+        self.tab_contents = [
+            ft.Column(scroll=ft.ScrollMode.AUTO, expand=True),  # Tab 0: Identificación
+            ft.Column(scroll=ft.ScrollMode.AUTO, expand=True),  # Tab 1: Descripción
+            ft.Column(scroll=ft.ScrollMode.AUTO, expand=True),  # Tab 2: Prestaciones
+            ft.Column(scroll=ft.ScrollMode.AUTO, expand=True),  # Tab 3: Exportar
+        ]
         
         # Inicializar primer tab
         self._build_identificacion()
+        
+        self.tabs = ft.Tabs(
+            length=4,
+            selected_index=0,
+            animation_duration=300,
+            content=ft.Column(
+                expand=True,
+                controls=[
+                    ft.TabBar(
+                        tabs=[
+                            ft.Tab(label="1. Identificación"),
+                            ft.Tab(label="2. Descripción Programa"),
+                            ft.Tab(label="3. Prestaciones"),
+                            ft.Tab(label="4. Guardar/Exportar"),
+                        ],
+                        on_change=self._on_tab_change
+                    ),
+                    ft.TabBarView(
+                        expand=True,
+                        controls=self.tab_contents
+                    ),
+                ],
+            ),
+        )
         
         self.page.add(self.tabs)
 
@@ -273,7 +286,7 @@ class SPSPrecargaApp:
         self.page.update()
 
     def _on_tab_change(self, e):
-        """Maneja el cambio de tabs en Flet 0.85+"""
+        """Maneja el cambio de tabs en Flet 0.85.1"""
         idx = self.tabs.selected_index
         
         # Cargar contenido del tab seleccionado
