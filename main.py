@@ -90,32 +90,29 @@ class SPSPrecargaApp:
         self._build_ui()
 
     def _build_ui(self):
-        # ✅ Tabs con label (no text) y sin content directo
+        # ✅ Tabs con label y content directo (Flet 0.85+)
         self.tabs = ft.Tabs(
             selected_index=0,
             animation_duration=300,
             tabs=[
-                ft.Tab(label="1. Identificación"),
-                ft.Tab(label="2. Descripción Programa"),
-                ft.Tab(label="3. Prestaciones"),
-                ft.Tab(label="4. Guardar/Exportar"),
+                ft.Tab(label="1. Identificación", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
+                ft.Tab(label="2. Descripción Programa", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
+                ft.Tab(label="3. Prestaciones", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
+                ft.Tab(label="4. Guardar/Exportar", content=ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)),
             ],
             on_change=self._on_tab_change
         )
         
-        # ✅ Contenido separado en diccionario
-        self.tab_contents[0] = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
-        self.tab_contents[1] = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
-        self.tab_contents[2] = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
-        self.tab_contents[3] = ft.Column(scroll=ft.ScrollMode.AUTO, expand=True)
+        # ✅ Referencias a los contenidos de cada tab
+        self.tab_contents[0] = self.tabs.tabs[0].content
+        self.tab_contents[1] = self.tabs.tabs[1].content
+        self.tab_contents[2] = self.tabs.tabs[2].content
+        self.tab_contents[3] = self.tabs.tabs[3].content
         
         # Inicializar primer tab
         self._build_identificacion()
         
-        self.page.add(
-            ft.Row([self.tabs], expand=True),
-            ft.Container(content=self.tab_contents[0], expand=True, padding=20)
-        )
+        self.page.add(self.tabs)
 
     def _add_field(self, tab_idx, label, key, control, visible=True):
         col = self.tab_contents[tab_idx]
@@ -287,10 +284,7 @@ class SPSPrecargaApp:
         elif idx == 3:
             self._build_export()
         
-        # Actualizar contenedor visible
-        if len(self.page.controls) > 1:
-            self.page.controls[1].content = self.tab_contents[idx]
-        
+        # Actualizar la página para mostrar el nuevo contenido del tab
         self.page.update()
         
         # Auto-save al cambiar de tab (si ya hay programa cargado)
