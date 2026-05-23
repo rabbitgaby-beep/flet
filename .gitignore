@@ -1,4 +1,4 @@
-c.bat
-c.lnk
-r.bat
-r.lnk
+```
+__pycache__/
+*.pyc
+```
